@@ -24,6 +24,12 @@ const Table = () => {
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
+  const handleUpdateRows = (updatedRow, id) => {
+    setFilteredRows((prevRows) =>
+      prevRows.map((row) => (row.id === id ? updatedRow : row))
+    );
+  };
+
   useEffect(() => {
     if (!selectedCountries.length) {
       setFilteredRows(rows || []);
@@ -56,7 +62,7 @@ const Table = () => {
       <Grid container>
         {columns.map((column) => (
           <Grid
-          key={column.valueKey}
+            key={column.valueKey}
             px={1.5}
             py={2}
             item
@@ -74,6 +80,7 @@ const Table = () => {
           <Grid key={row.id} container>
             {columns.map((column) => (
               <Grid
+                key={column.valueKey}
                 p={2}
                 item
                 size={column.xsValue}
@@ -83,6 +90,7 @@ const Table = () => {
                   row={row}
                   countries={countries}
                   column={column}
+                  handleUpdateRows={handleUpdateRows}
                 />
               </Grid>
             ))}
@@ -92,25 +100,11 @@ const Table = () => {
 
       <FilterAltOutlinedIcon
         onClick={handleClick}
-        sx={{
-          color: "#5622FF",
-          fontSize: "28px",
-          cursor: "pointer",
-          position: "absolute",
-          top: "16px",
-          right: "16px",
-          backgroundColor: "#fff",
-        }}
+        sx={styles.filterIconStyle}
       />
       <Popover
         id={id}
-        sx={{
-          "& .MuiPaper-root": {
-            width: "300px",
-            maxHeight: "300px",
-            overflowY: "auto",
-          },
-        }}
+        sx={styles.popoverStyle}
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
@@ -123,6 +117,7 @@ const Table = () => {
           <List sx={{ minWidth: 200 }}>
             {countries?.map(({ name }) => (
               <ListItem
+                sx={styles.popoverItemStyleF}
                 key={name}
                 dense
                 button

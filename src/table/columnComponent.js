@@ -1,7 +1,6 @@
 import { FormControl, MenuItem, Select, Typography } from "@mui/material";
 import { formatDateToShortMonth } from "./utils";
 import { useUpdateTaxMutation } from "../app/taxSlice";
-import { useState } from "react";
 
 const getChipStyle = (value) => ({
   backgroundColor: value === "male" ? "#FCF2F3" : "#EBF5FB",
@@ -10,10 +9,9 @@ const getChipStyle = (value) => ({
   width: "fit-content",
 });
 
-const ColumnComponent = ({ row, column, countries }) => {
+const ColumnComponent = ({ row, column, countries, handleUpdateRows }) => {
   const [updateTax] = useUpdateTaxMutation();
-  const [country, setCountry] = useState(row.country);
-  const value = row[column.valueKey];
+  const value = row[column.valueKey] || "";
 
   switch (column.columnType) {
     case "text":
@@ -36,7 +34,7 @@ const ColumnComponent = ({ row, column, countries }) => {
     case "dropdown":
       const handleChangeCountry = async (event) => {
         const newValue = event.target.value;
-        setCountry(newValue);
+        handleUpdateRows({ ...row, country: newValue }, row.id);
         await updateTax({ row: { ...row, country: newValue }, id: row.id });
       };
 
@@ -44,7 +42,7 @@ const ColumnComponent = ({ row, column, countries }) => {
         <FormControl size="small" sx={{ minWidth: 80 }}>
           <Select
             size="small"
-            value={country}
+            value={value}
             onChange={handleChangeCountry}
             sx={{
               "& .MuiSelect-select": {
